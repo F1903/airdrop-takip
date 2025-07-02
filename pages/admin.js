@@ -1,16 +1,28 @@
 // 2. pages/admin.js
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import './styles/globals.css';
 
 export default function Admin() {
   const [showPanel, setShowPanel] = useState(false);
   const [password, setPassword] = useState('');
-  const [form, setForm] = useState({ image: '', name: '', priceSui: '', priceUsd: '' });
-  const [nfts, setNfts] = useState([]);
+  const [form, setForm] = useState({
+    Name: '',
+    Stage: '',
+    Official_Accounts: '',
+    Important_Links: '',
+    Details_to_do_list: '',
+    Funds_amount: '',
+    TGE_MAINNET_DATE: '',
+    Chain: '',
+    Live: '',
+    Estimated_Cost: ''
+  });
+  const [airdrops, setAirdrops] = useState([]);
 
-   const getData = () => {
-    fetch('/api/nfts')
+  const getData = () => {
+    fetch('/api/airdrops')
       .then(res => res.json())
-      .then(setNfts);
+      .then(setAirdrops);
   };
 
   const handleLogin = () => {
@@ -23,34 +35,19 @@ export default function Admin() {
   };
 
   const handleSubmit = () => {
-  fetch('/api/save', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(form)
-  })
-  .then(res => res.json())
-  .then(result => {
-    if (result.success) {
-      alert('NFT Eklendi!');
-      window.location.href = '/';
-    } else if (result.error) {
-      alert('Hata: ' + result.error);
-    }
-  })
-  .catch(err => {
-    console.error('İstek Hatası:', err);
-    alert('Sunucu hatası oluştu!');
-  });
-};
-
-const handleDelete = (id) => {
-    fetch(`/api/delete?id=${id}`, { method: 'DELETE' })
-      .then(() => getData());
+    fetch('/api/save-airdrop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    })
+    .then(() => {
+      alert('Kayıt Eklendi!');
+      getData();
+    });
   };
 
-
   return (
-   <div className="adminContainer">
+    <div className="adminContainer">
       {!showPanel ? (
         <div className="adminPanel">
           <input type="password" placeholder="Şifre" value={password} onChange={e => setPassword(e.target.value)} />
@@ -58,31 +55,44 @@ const handleDelete = (id) => {
         </div>
       ) : (
         <div className="adminPanel">
-          <input placeholder="NFT Image URL" onChange={e => setForm({...form, image: e.target.value})} />
-          <input placeholder="NFT Name" onChange={e => setForm({...form, name: e.target.value})} />
-          <input placeholder="Mint Price (SUI)" onChange={e => setForm({...form, priceSui: e.target.value})} />
-          <input placeholder="Mint Price (USD)" onChange={e => setForm({...form, priceUsd: e.target.value})} />
+          {Object.keys(form).map((key) => (
+            <input
+              key={key}
+              placeholder={key}
+              onChange={e => setForm({ ...form, [key]: e.target.value })}
+            />
+          ))}
           <button onClick={handleSubmit}>Ekle</button>
 
-          <h2 style={{marginTop: '30px'}}>NFT Listesi</h2>
+          <h2 style={{marginTop: '30px'}}>Airdrop Listesi</h2>
           <table>
             <thead>
               <tr>
-                <th>Image</th>
                 <th>Name</th>
-                <th>Mint Price (SUI)</th>
-                <th>Mint Price (USD)</th>
-                <th>Sil</th>
+                <th>Stage</th>
+                <th>Official Accounts</th>
+                <th>Important Links</th>
+                <th>Details - To Do List</th>
+                <th>Funds Amount</th>
+                <th>TGE/Mainnet Date</th>
+                <th>Chain</th>
+                <th>Live</th>
+                <th>Estimated Cost</th>
               </tr>
             </thead>
             <tbody>
-              {nfts.map((nft) => (
-                <tr key={nft.id}>
-                  <td><img src={nft.image} width="50" /></td>
-                  <td>{nft.name}</td>
-                  <td>{nft.priceSui}</td>
-                  <td>{nft.priceUsd}</td>
-                  <td><button onClick={() => handleDelete(nft.id)}>Sil</button></td>
+              {airdrops.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.Name}</td>
+                  <td>{item.Stage}</td>
+                  <td>{item.Official_Accounts}</td>
+                  <td>{item.Important_Links}</td>
+                  <td>{item.Details_to_do_list}</td>
+                  <td>{item.Funds_amount}</td>
+                  <td>{item.TGE_MAINNET_DATE}</td>
+                  <td>{item.Chain}</td>
+                  <td>{item.Live}</td>
+                  <td>{item.Estimated_Cost}</td>
                 </tr>
               ))}
             </tbody>

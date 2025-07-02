@@ -1,55 +1,53 @@
 // 1. pages/index.js
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
+import './styles/globals.css';
 
 export default function Home() {
-  const [nfts, setNfts] = useState([]);
-  const [adminMode, setAdminMode] = useState(false);
+  const [airdrops, setAirdrops] = useState([]);
 
   const getData = () => {
-    fetch('/api/nfts')
+    fetch('/api/airdrops')
       .then(res => res.json())
-      .then(setNfts);
+      .then(setAirdrops);
   };
 
   useEffect(() => {
     getData();
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') === 'true') {
-      setAdminMode(true);
-    }
   }, []);
-
-  const handleDelete = (id) => {
-    fetch(`/api/delete?id=${id}`, { method: 'DELETE' })
-      .then(() => getData());
-  };
 
   return (
     <div className="container">
-      <Head><title>NFT Listesi</title></Head>
-      <h1>NFT Listesi</h1>
+      <Head><title>Airdrop Takip</title></Head>
+      <h1>Airdrop Takip Listesi</h1>
       <table>
         <thead>
           <tr>
-            <th>Image</th>
             <th>Name</th>
-            <th>Mint Price (SUI)</th>
-            <th>Mint Price (USD)</th>
-            {adminMode && <th>Sil</th>}
+            <th>Stage</th>
+            <th>Official Accounts</th>
+            <th>Important Links</th>
+            <th>Details - To Do List</th>
+            <th>Funds Amount</th>
+            <th>TGE/Mainnet Date</th>
+            <th>Chain</th>
+            <th>Live</th>
+            <th>Estimated Cost</th>
           </tr>
         </thead>
         <tbody>
-          {nfts.map((nft) => (
-            <tr key={nft.id}>
-              <td><img src={nft.image} width="50" /></td>
-              <td>{nft.name}</td>
-              <td>{nft.priceSui}</td>
-              <td>{nft.priceUsd}</td>
-              {adminMode && (
-                <td><button onClick={() => handleDelete(nft.id)}>Sil</button></td>
-              )}
+          {airdrops.map((item) => (
+            <tr key={item.id}>
+              <td>{item.Name}</td>
+              <td>{item.Stage}</td>
+              <td>{item.Official_Accounts}</td>
+              <td>{item.Important_Links}</td>
+              <td>{item.Details_to_do_list}</td>
+              <td>{item.Funds_amount}</td>
+              <td>{item.TGE_MAINNET_DATE}</td>
+              <td>{item.Chain}</td>
+              <td>{item.Live}</td>
+              <td>{item.Estimated_Cost}</td>
             </tr>
           ))}
         </tbody>
