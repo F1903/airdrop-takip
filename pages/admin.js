@@ -1,6 +1,5 @@
 // 2. pages/admin.js
 import { useState } from 'react';
-import './styles/globals.css';
 
 export default function Admin() {
   const [showPanel, setShowPanel] = useState(false);
