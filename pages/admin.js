@@ -1,5 +1,5 @@
 // 2. pages/admin.js
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './styles/globals.css';
 
 export default function Admin() {
